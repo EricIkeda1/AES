@@ -24,23 +24,73 @@ Rcon = [
     0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4
 ]
 
-# Função para SubWord (substituição pela S-Box)
+# Função SubBytes
+def SubBytes(state):
+    for i in range(4):
+        for j in range(4):
+            state[i][j] = s_box[state[i][j]]
+    return state
+
+# Função ShiftRows
+def ShiftRows(state):
+    state[1] = state[1][1:] + state[1][:1]
+    state[2] = state[2][2:] + state[2][:2]
+    state[3] = state[3][3:] + state[3][:3]
+    return state
+
+# Função para multiplicar no campo finito (Galois Field)
+def galois_mult(a, b):
+    p = 0
+    for i in range(8):
+        if b & 1:
+            p ^= a
+        carry = a & 0x80
+        a <<= 1
+        if carry:
+            a ^= 0x1b
+        b >>= 1
+    return p & 0xff
+
+# Função MixColumns corrigida
+def MixColumns(state):
+    for i in range(4):
+        a = state[i]
+        state[i] = [
+            galois_mult(a[0], 2) ^ galois_mult(a[1], 3) ^ a[2] ^ a[3],
+            a[0] ^ galois_mult(a[1], 2) ^ galois_mult(a[2], 3) ^ a[3],
+            a[0] ^ a[1] ^ galois_mult(a[2], 2) ^ galois_mult(a[3], 3),
+            galois_mult(a[0], 3) ^ a[1] ^ a[2] ^ galois_mult(a[3], 2)
+        ]
+    return state
+
+# Função AddRoundKey
+def AddRoundKey(state, round_key):
+    for i in range(4):
+        for j in range(4):
+            state[i][j] ^= round_key[i][j]
+    return state
+
+# Função SubWord
 def SubWord(word):
     return [s_box[b] for b in word]
 
-# Função para RotWord (rotação de bytes)
+# Função RotWord
 def RotWord(word):
     return word[1:] + word[:1]
 
-# Função para expandir a chave e calcular w8
+# Função para converter a chave expandida em uma matriz 4x4
+def KeyToMatrix(key):
+    return [key[i:i+4] for i in range(0, len(key), 4)]
+
+# Função de expansão de chave corrigida
 def KeyExpansion(key):
-    w = [0] * 44  
+    w = [0] * 44  # 44 palavras de 4 bytes para 11 rodadas
     
-    # Copia a chave original nas primeiras 4 palavras
+    # As 4 primeiras palavras são simplesmente a chave
     for i in range(4):
         w[i] = key[4 * i:4 * (i + 1)]
     
-    # Expande as palavras subsequentes
+    # Expansão para as 40 palavras restantes
     for i in range(4, 44):
         temp = w[i - 1]
         
@@ -50,23 +100,64 @@ def KeyExpansion(key):
         
         w[i] = [(w[i - 4][j] ^ temp[j]) for j in range(4)]
     
-    return w
+    # Transformando em um array de 4x4 por rodada
+    expanded_key = [w[i:i + 4] for i in range(0, len(w), 4)]
+    return expanded_key
 
-# Chave original
+# Função para criptografar
+def AES_encrypt(plaintext, key):
+    # Convertendo o plaintext em matriz de estado 4x4
+    state = KeyToMatrix(plaintext)
+    
+    # Expansão da chave
+    expanded_key = KeyExpansion(key)
+    
+    # Adiciona a primeira rodada da chave
+    state = AddRoundKey(state, expanded_key[0])
+
+    print("Início da Rodada:", state)
+    
+    # 9 rodadas principais
+    for round_num in range(1, 10):
+        state = SubBytes(state)
+        print(f"Após SubBytes {round_num}:", state)
+
+        state = ShiftRows(state)
+        print(f"Após ShiftRows {round_num}:", state)
+
+        state = MixColumns(state)
+        print(f"Após MixColumns {round_num}:", state)
+
+        round_key = expanded_key[round_num]
+        state = AddRoundKey(state, round_key)
+        print(f"Chave da Rodada {round_num}:", round_key)
+
+    # Rodada final (sem MixColumns)
+    state = SubBytes(state)
+    state = ShiftRows(state)
+    final_round_key = expanded_key[10]
+    state = AddRoundKey(state, final_round_key)
+
+    print("Texto Cifrado Final:", state)
+    return state
+
+# Dados fornecidos no problema
+plaintext = [
+    0x01, 0x23, 0x45, 0x67, 
+    0x89, 0xab, 0xcd, 0xef, 
+    0xfe, 0xdc, 0xba, 0x98, 
+    0x76, 0x54, 0x32, 0x10
+]
+
 key = [
     0x0f, 0x15, 0x71, 0xc9,  
     0x47, 0xd9, 0xe8, 0x59, 
     0x0c, 0xb7, 0xad, 0xd6, 
-    0xaf, 0x7f, 0x67, 0x98,
-    0xdc, 0x90, 0x37, 0xb0,
-    0x9b, 0x49, 0xdf, 0xe9,
-    0x97, 0xfe, 0x72, 0x3f,
-    0x38, 0x81, 0x15, 0xa7
+    0xaf, 0x7f, 0x67, 0x98
 ]
 
-# Expande a chave
-expanded_key = KeyExpansion(key)
+# Executando a criptografia
+ciphertext = AES_encrypt(plaintext, key)
 
-# Mostrando o valor de w8
-w8 = expanded_key[8]
-print(f"w8: {[hex(x) for x in w8]}")
+# Mostrando o resultado final
+print("Texto Cifrado:", ciphertext)
