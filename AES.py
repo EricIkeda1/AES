@@ -104,7 +104,15 @@ def KeyExpansion(key):
     expanded_key = [w[i:i + 4] for i in range(0, len(w), 4)]
     return expanded_key
 
-# Função para criptografar
+def print_table(label, state):
+    print(f"\n{label}:")
+    print("┌────┬────┬────┬────┐")
+    for row in state:
+        print("│", " │ ".join(f"{x:02x}" for x in row), "│")
+        print("├────┼────┼────┼────┤")
+    print("└────┴────┴────┴────┘")
+
+# Função para criptografar com impressão em tabela
 def AES_encrypt(plaintext, key):
     # Convertendo o plaintext em matriz de estado 4x4
     state = KeyToMatrix(plaintext)
@@ -114,50 +122,46 @@ def AES_encrypt(plaintext, key):
     
     # Adiciona a primeira rodada da chave
     state = AddRoundKey(state, expanded_key[0])
-
-    print("Início da Rodada:", state)
+    print_table("Início da Rodada", state)
     
     # 9 rodadas principais
     for round_num in range(1, 10):
         state = SubBytes(state)
-        print(f"Após SubBytes {round_num}:", state)
+        print_table(f"Após SubBytes {round_num}", state)
 
         state = ShiftRows(state)
-        print(f"Após ShiftRows {round_num}:", state)
+        print_table(f"Após ShiftRows {round_num}", state)
 
         state = MixColumns(state)
-        print(f"Após MixColumns {round_num}:", state)
+        print_table(f"Após MixColumns {round_num}", state)
 
         round_key = expanded_key[round_num]
+        print_table(f"Chave da Rodada {round_num}", round_key)
         state = AddRoundKey(state, round_key)
-        print(f"Chave da Rodada {round_num}:", round_key)
-
+    
     # Rodada final (sem MixColumns)
     state = SubBytes(state)
     state = ShiftRows(state)
     final_round_key = expanded_key[10]
     state = AddRoundKey(state, final_round_key)
 
-    print("Texto Cifrado Final:", state)
+    print_table("Texto Cifrado Final", state)
     return state
 
-# Dados fornecidos no problema
-plaintext = [
-    0x01, 0x23, 0x45, 0x67, 
-    0x89, 0xab, 0xcd, 0xef, 
-    0xfe, 0xdc, 0xba, 0x98, 
-    0x76, 0x54, 0x32, 0x10
-]
+# Função para converter string hexadecimal em lista de inteiros
+def hex_to_bytes(hex_string):
+    return [int(hex_string[i:i+2], 16) for i in range(0, len(hex_string), 2)]
 
-key = [
-    0x0f, 0x15, 0x71, 0xc9,  
-    0x47, 0xd9, 0xe8, 0x59, 
-    0x0c, 0xb7, 0xad, 0xd6, 
-    0xaf, 0x7f, 0x67, 0x98
-]
+# Definindo o plaintext e a chave em formato hexadecimal
+plaintext_hex = "0123456789abcdeffedcba9876543210"
+key_hex = "0f1571c947d9e8590cb7add6af7f6798"
 
-# Executando a criptografia
+# Convertendo o texto claro e a chave
+plaintext = hex_to_bytes(plaintext_hex)
+key = hex_to_bytes(key_hex)
+
+# Chamar a função AES_encrypt para criptografar o texto
 ciphertext = AES_encrypt(plaintext, key)
 
-# Mostrando o resultado final
-print("Texto Cifrado:", ciphertext)
+# Exibir o resultado da criptografia
+print("Texto Cifrado:", ''.join(f'{byte:02x}' for byte in ciphertext))
