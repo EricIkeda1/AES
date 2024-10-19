@@ -107,8 +107,8 @@ def KeyExpansion(key):
 def print_table(label, state):
     print(f"\n{label}:")
     print("+----+----+----+----+")
-    for row in state:
-        print("| " + " | ".join(f"{val:02x}" for val in row) + " |")
+    for col in range(4):
+        print("| " + " | ".join(f"{state[row][col]:02x}" for row in range(4)) + " |")
         print("+----+----+----+----+")
 
 def AES_encrypt(plaintext, key):
