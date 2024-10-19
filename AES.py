@@ -122,7 +122,7 @@ def AES_encrypt(plaintext, key):
     print_table("Início da Rodada", state)
     
     # 9 rodadas principais
-    for round_num in range(1, 10):
+    for round_num in range(1, 6):
         state = SubBytes(state)
         print_table(f"Após SubBytes {round_num}", state)
 
