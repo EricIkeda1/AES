@@ -106,13 +106,10 @@ def KeyExpansion(key):
 
 def print_table(label, state):
     print(f"\n{label}:")
-    print("┌────┬────┬────┬────┐")
-    for row in state:
-        print("│", " │ ".join(f"{x:02x}" for x in row), "│")
-        print("├────┼────┼────┼────┤")
-    print("└────┴────┴────┴────┘")
+    # Transpor a matriz para imprimir as colunas como linhas
+    for col in range(4):
+        print(" ".join(f"{state[row][col]:02x}" for row in range(4)))
 
-# Função para criptografar com impressão em tabela
 def AES_encrypt(plaintext, key):
     # Convertendo o plaintext em matriz de estado 4x4
     state = KeyToMatrix(plaintext)
@@ -146,7 +143,9 @@ def AES_encrypt(plaintext, key):
     state = AddRoundKey(state, final_round_key)
 
     print_table("Texto Cifrado Final", state)
-    return state
+
+    # Achatar a matriz de estado para obter a lista final de bytes
+    return [state[row][col] for col in range(4) for row in range(4)]
 
 # Função para converter string hexadecimal em lista de inteiros
 def hex_to_bytes(hex_string):
