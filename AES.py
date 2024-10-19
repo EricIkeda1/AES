@@ -106,9 +106,10 @@ def KeyExpansion(key):
 
 def print_table(label, state):
     print(f"\n{label}:")
-    # Transpor a matriz para imprimir as colunas como linhas
-    for col in range(4):
-        print(" ".join(f"{state[row][col]:02x}" for row in range(4)))
+    print("+----+----+----+----+")
+    for row in state:
+        print("| " + " | ".join(f"{val:02x}" for val in row) + " |")
+        print("+----+----+----+----+")
 
 def AES_encrypt(plaintext, key):
     # Convertendo o plaintext em matriz de estado 4x4
