@@ -142,10 +142,6 @@ def AES_encrypt(plaintext, key):
         # Chave da rodada
         round_key = expanded_key[round_num]
         print_table(f"Chave da Rodada {round_num}", round_key)
-        
-        # Adiciona a chave da rodada
-        state = AddRoundKey(state, round_key)
-        print_table(f"Após AddRoundKey {round_num}", state)
     
     # Rodada final (sem MixColumns)
     state = SubBytes(state)
