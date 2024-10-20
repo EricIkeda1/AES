@@ -120,22 +120,33 @@ def AES_encrypt(plaintext, key):
     
     # Adiciona a primeira rodada da chave
     state = AddRoundKey(state, expanded_key[0])
-    print_table("Início da Rodada", state)
+    print_table("Início da Rodada 0", state)  # Alterado para "Rodada 0"
     
     # 9 rodadas principais
-    for round_num in range(1, 6):
+    for round_num in range(1, 10):
+        # Imprime o estado no início da rodada
+        print_table(f"Início da Rodada {round_num}", state)
+        
+        # Passo SubBytes
         state = SubBytes(state)
         print_table(f"Após SubBytes {round_num}", state)
 
+        # Passo ShiftRows
         state = ShiftRows(state)
         print_table(f"Após ShiftRows {round_num}", state)
 
-        state = MixColumns(state)
-        print_table(f"Após MixColumns {round_num}", state)
+        # Passo MixColumns (somente nas 9 primeiras rodadas)
+        if round_num < 10:
+            state = MixColumns(state)
+            print_table(f"Após MixColumns {round_num}", state)
 
+        # Chave da rodada
         round_key = expanded_key[round_num]
         print_table(f"Chave da Rodada {round_num}", round_key)
+        
+        # Adiciona a chave da rodada
         state = AddRoundKey(state, round_key)
+        print_table(f"Após AddRoundKey {round_num}", state)
     
     # Rodada final (sem MixColumns)
     state = SubBytes(state)
@@ -165,3 +176,4 @@ ciphertext = AES_encrypt(plaintext, key)
 
 # Exibir o resultado da criptografia
 print("Texto Cifrado:", ''.join(f'{byte:02x}' for byte in ciphertext))
+
