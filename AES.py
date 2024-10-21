@@ -126,11 +126,12 @@ def AES_encrypt(plaintext, key):
     # Adiciona a primeira rodada da chave
     print_table("Estado Inicial", state)
     state = AddRoundKey(state, expanded_key[0])
-    print_table("Após AddRoundKey (Chave Inicial)", state)
+    print_table("Chave da Rodada Inicial", expanded_key[0])
+    print_table("Após Início da Rodada (Chave Inicial)", state)
 
-    # 9 rodadas principais
     for round_num in range(1, 10):  # De 1 a 9 rodadas principais
         print(f"\nInício da Rodada {round_num}")
+        
         state = SubBytes(state)
         print_table(f"Após SubBytes (Rodada {round_num})", state)
         
@@ -149,19 +150,19 @@ def AES_encrypt(plaintext, key):
     print("\nInício da Rodada Final")
     state = SubBytes(state)
     print_table("Após SubBytes (Rodada Final)", state)
-    
+
     state = shift_rows(state)
     print_table("Após ShiftRows (Rodada Final)", state)
-    
+
     final_round_key = expanded_key[10]
     print_table("Chave da Rodada Final", final_round_key)
-    
+
     state = AddRoundKey(state, final_round_key)
-    
+
     # Exibir o estado final cifrado
     print_table("Texto Cifrado Final", state)
 
-    # Retorna a lista de 16 bytes após a criptografia
+# Retorna a lista de 16 bytes após a criptografia
     return [state[row][col] for col in range(4) for row in range(4)]
 
 # Função para converter string hexadecimal em lista de inteiros
