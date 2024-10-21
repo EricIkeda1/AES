@@ -89,27 +89,23 @@ def KeyToMatrix(key):
 
 # Função de expansão de chave corrigida
 def KeyExpansion(key):
-    # Inicializando w com 44 palavras de 4 bytes
-    w = [0] * 44  
-
+    w = [0] * 44  # 44 palavras de 4 bytes para 11 rodadas
+    
     # As 4 primeiras palavras são simplesmente a chave
     for i in range(4):
         w[i] = key[4 * i:4 * (i + 1)]
-
+    
     # Expansão para as 40 palavras restantes
     for i in range(4, 44):
-        temp = w[i - 1][:]  # Faz uma cópia da palavra anterior
-
+        temp = w[i - 1]
+        
         if i % 4 == 0:
-            temp = RotWord(temp)  # Aplica RotWord
-            temp = SubWord(temp)  # Aplica SubWord
-            rcon_index = i // 4 - 1
-            temp[0] ^= Rcon[rcon_index]  # Aplica Rcon
-
-        # Nova palavra é a XOR da palavra 4 posições antes e temp
-        w[i] = [w[i - 4][j] ^ temp[j] for j in range(4)]
-
-    # Transformando em uma lista de 4 palavras por rodada
+            temp = SubWord(RotWord(temp))
+            temp[0] ^= Rcon[i // 4 - 1]
+        
+        w[i] = [(w[i - 4][j] ^ temp[j]) for j in range(4)]
+    
+    # Transformando em um array de 4x4 por rodada
     expanded_key = [w[i:i + 4] for i in range(0, len(w), 4)]
     return expanded_key
 
@@ -128,27 +124,26 @@ def AES_encrypt(plaintext, key):
     expanded_key = KeyExpansion(key)
     
     # Adiciona a primeira rodada da chave
-    print_table("Estado Inicial", state)
+    print_table("Início da Rodada", state)
     state = AddRoundKey(state, expanded_key[0])
     print_table("Chave da Rodada Inicial", expanded_key[0])
+    
     for round_num in range(1, 10):  # De 1 a 9 rodadas principais
-        print_table(f"Início da (Rodada {round_num})", state)
-        
+        print_table(f"Início da Rodada {round_num}", state)
+
         state = SubBytes(state)
         print_table(f"Após SubBytes (Rodada {round_num})", state)
         
         state = shift_rows(state)
         print_table(f"Após ShiftRows (Rodada {round_num})", state)
         
-        if round_num < 9:  # MixColumns não é chamada na rodada final
-            state = MixColumns(state)
-            print_table(f"Após MixColumns (Rodada {round_num})", state)
+        state = MixColumns(state)
+        print_table(f"Após MixColumns (Rodada {round_num})", state)
         
         round_key = expanded_key[round_num]
         print_table(f"Chave da Rodada {round_num}", round_key)
 
         state = AddRoundKey(state, round_key)
-        print_table(f"Após AddRoundKey (Rodada {round_num})", state)
 
     # Rodada final
     print("\nInício da Rodada Final")
@@ -162,9 +157,11 @@ def AES_encrypt(plaintext, key):
     print_table("Chave da Rodada Final", final_round_key)
 
     state = AddRoundKey(state, final_round_key)
+
+    # Exibir o estado final cifrado
     print_table("Texto Cifrado Final", state)
 
-    # Retorna a lista de 16 bytes após a criptografia
+# Retorna a lista de 16 bytes após a criptografia
     return [state[row][col] for col in range(4) for row in range(4)]
 
 # Função para converter string hexadecimal em lista de inteiros
