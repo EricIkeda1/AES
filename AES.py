@@ -128,7 +128,7 @@ def AES_encrypt(plaintext, key):
     state = AddRoundKey(state, expanded_key[0])
         
 # 9 rodadas principais
-    for round_num in range(1, 10):  # Mudado para 1 a 9
+    for round_num in range(1, 11):  # Mudado para 1 a 9
     # Imprime o estado no início da rodada
         print_table(f"Início da Rodada {round_num}", state)
     
@@ -155,7 +155,6 @@ def AES_encrypt(plaintext, key):
     state = AddRoundKey(state, final_round_key)
 
     print_table("Texto Cifrado Final", state)
-
 
     # Achatar a matriz de estado para obter a lista final de bytes
     return [state[row][col] for col in range(4) for row in range(4)]
