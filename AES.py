@@ -44,19 +44,6 @@ def shift_rows(state):
     # Retorna a matriz achatada
     return [byte for row in matrix for byte in row]
 
-# Função inv_shift_rows (inversa do ShiftRows)
-def inv_shift_rows(state):
-    # Converte o vetor de 16 elementos em uma matriz 4x4
-    matrix = [state[i:i + 4] for i in range(0, 16, 4)]
-    
-    # Rotaciona as linhas na direção oposta
-    matrix[1] = matrix[1][-1:] + matrix[1][:-1]  # Rotaciona a segunda linha uma posição à direita
-    matrix[2] = matrix[2][-2:] + matrix[2][:-2]  # Rotaciona a terceira linha duas posições à direita
-    matrix[3] = matrix[3][-3:] + matrix[3][:-3]  # Rotaciona a quarta linha três posições à direita
-    
-    # Retorna a matriz achatada
-    return [byte for row in matrix for byte in row]
-
 # Função para multiplicar no campo finito (Galois Field)
 def galois_mult(a, b):
     p = 0
