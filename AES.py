@@ -89,15 +89,16 @@ def KeyToMatrix(key):
 
 # Função de expansão de chave corrigida
 def KeyExpansion(key):
-    w = [0] * 44  # 44 palavras de 4 bytes para 11 rodadas
-    
+    # Inicializando w com 44 palavras de 4 bytes
+    w = [0] * 44  
+
     # As 4 primeiras palavras são simplesmente a chave
     for i in range(4):
         w[i] = key[4 * i:4 * (i + 1)]
 
     # Expansão para as 40 palavras restantes
     for i in range(4, 44):
-        temp = w[i - 1]
+        temp = w[i - 1][:]  # Faz uma cópia da palavra anterior
 
         if i % 4 == 0:
             temp = RotWord(temp)  # Aplica RotWord
@@ -105,7 +106,8 @@ def KeyExpansion(key):
             rcon_index = i // 4 - 1
             temp[0] ^= Rcon[rcon_index]  # Aplica Rcon
 
-        w[i] = [(w[i - 4][j] ^ temp[j]) for j in range(4)]  # Nova palavra
+        # Nova palavra é a XOR da palavra 4 posições antes e temp
+        w[i] = [w[i - 4][j] ^ temp[j] for j in range(4)]
 
     # Transformando em uma lista de 4 palavras por rodada
     expanded_key = [w[i:i + 4] for i in range(0, len(w), 4)]
@@ -130,7 +132,7 @@ def AES_encrypt(plaintext, key):
     state = AddRoundKey(state, expanded_key[0])
     print_table("Chave da Rodada Inicial", expanded_key[0])
     for round_num in range(1, 10):  # De 1 a 9 rodadas principais
-        print_table("Início da Rodada", state)
+        print_table(f"Início da (Rodada {round_num})", state)
         
         state = SubBytes(state)
         print_table(f"Após SubBytes (Rodada {round_num})", state)
