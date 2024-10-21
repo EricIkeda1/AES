@@ -56,7 +56,6 @@ def galois_mult(a, b):
         b >>= 1
     return p & 0xff
 
-# Função MixColumns corrigida
 def MixColumns(state):
     for i in range(4):
         a = state[i]
@@ -89,23 +88,26 @@ def KeyToMatrix(key):
 
 # Função de expansão de chave corrigida
 def KeyExpansion(key):
-    w = [0] * 44  # 44 palavras de 4 bytes para 11 rodadas
-    
-    # As 4 primeiras palavras são simplesmente a chave
+    # Inicializa uma lista para armazenar as 44 palavras (4 bytes cada) necessárias para 11 rodadas
+    w = []
+
+    # Copia as 4 palavras (16 bytes) da chave original para os primeiros espaços
     for i in range(4):
-        w[i] = key[4 * i:4 * (i + 1)]
-    
-    # Expansão para as 40 palavras restantes
+        w.append(key[4 * i:4 * (i + 1)])
+
+    # Expande as outras 40 palavras
     for i in range(4, 44):
-        temp = w[i - 1]
-        
+        temp = w[i - 1][:]  # Copia da última palavra gerada
+
+        # A cada 4 palavras, aplica SubWord, RotWord e XOR com Rcon
         if i % 4 == 0:
             temp = SubWord(RotWord(temp))
-            temp[0] ^= Rcon[i // 4 - 1]
+            temp[0] ^= Rcon[i // 4 - 1]  # XOR com Rcon correspondente
         
-        w[i] = [(w[i - 4][j] ^ temp[j]) for j in range(4)]
-    
-    # Transformando em um array de 4x4 por rodada
+        # Gera a nova palavra XOR da palavra anterior com a palavra 4 posições atrás
+        w.append([w[i - 4][j] ^ temp[j] for j in range(4)])
+
+    # Retorna a lista completa de palavras expandidas para as rodadas
     expanded_key = [w[i:i + 4] for i in range(0, len(w), 4)]
     return expanded_key
 
@@ -129,7 +131,7 @@ def AES_encrypt(plaintext, key):
     print_table("Chave da Rodada Inicial", expanded_key[0])
     
     for round_num in range(1, 10):  # De 1 a 9 rodadas principais
-        print_table(f"Início da Rodada {round_num}", state)
+        print_table(f"Início da (Rodada {round_num})", state)
 
         state = SubBytes(state)
         print_table(f"Após SubBytes (Rodada {round_num})", state)
@@ -144,6 +146,8 @@ def AES_encrypt(plaintext, key):
         print_table(f"Chave da Rodada {round_num}", round_key)
 
         state = AddRoundKey(state, round_key)
+        
+        return [state[row][col] for col in range(4) for row in range(4)]
 
     # Rodada final
     print("\nInício da Rodada Final")
@@ -157,7 +161,7 @@ def AES_encrypt(plaintext, key):
     print_table("Chave da Rodada Final", final_round_key)
 
     state = AddRoundKey(state, final_round_key)
-
+    
     # Exibir o estado final cifrado
     print_table("Texto Cifrado Final", state)
 
