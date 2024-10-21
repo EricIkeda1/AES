@@ -33,16 +33,15 @@ def SubBytes(state):
 
 # Função ShiftRows
 def shift_rows(state):
-    # Converte o vetor de 16 elementos em uma matriz 4x4
-    matrix = [state[i:i + 4] for i in range(0, 16, 4)]
+    # Primeira linha não é alterada
+    # Segunda linha é rotacionada 1 byte à esquerda
+    state[1] = state[1][1:] + state[1][:1]
+    # Terceira linha é rotacionada 2 bytes à esquerda
+    state[2] = state[2][2:] + state[2][:2]
+    # Quarta linha é rotacionada 3 bytes à esquerda
+    state[3] = state[3][3:] + state[3][:3]
     
-    # Rotaciona as linhas
-    matrix[1] = matrix[1][1:] + matrix[1][:1]  # Rotaciona a segunda linha uma posição à esquerda
-    matrix[2] = matrix[2][2:] + matrix[2][:2]  # Rotaciona a terceira linha duas posições à esquerda
-    matrix[3] = matrix[3][3:] + matrix[3][:3]  # Rotaciona a quarta linha três posições à esquerda
-    
-    # Retorna a matriz achatada
-    return [byte for row in matrix for byte in row]
+    return state
 
 # Função para multiplicar no campo finito (Galois Field)
 def galois_mult(a, b):
@@ -125,38 +124,44 @@ def AES_encrypt(plaintext, key):
     expanded_key = KeyExpansion(key)
     
     # Adiciona a primeira rodada da chave
+    print_table("Estado Inicial", state)
     state = AddRoundKey(state, expanded_key[0])
-        
-# 9 rodadas principais
-    for round_num in range(1, 11):  # Mudado para 1 a 9
-    # Imprime o estado no início da rodada
-        print_table(f"Início da Rodada {round_num}", state)
-    
-    # Passo SubBytes
+    print_table("Após AddRoundKey (Chave Inicial)", state)
+
+    # 9 rodadas principais
+    for round_num in range(1, 10):  # De 1 a 9 rodadas principais
+        print(f"\nInício da Rodada {round_num}")
         state = SubBytes(state)
-        print_table(f"Após SubBytes {round_num}", state)
-
-    # Passo ShiftRows
-        state = shift_rows(state)  # Correção aqui
-        print_table(f"Após ShiftRows {round_num}", state)
-
-    # Passo MixColumns (somente nas 9 primeiras rodadas)
+        print_table(f"Após SubBytes (Rodada {round_num})", state)
+        
+        state = shift_rows(state)
+        print_table(f"Após ShiftRows (Rodada {round_num})", state)
+        
         state = MixColumns(state)
-        print_table(f"Após MixColumns {round_num}", state)
-
-    # Chave da rodada
+        print_table(f"Após MixColumns (Rodada {round_num})", state)
+        
         round_key = expanded_key[round_num]
         print_table(f"Chave da Rodada {round_num}", round_key)
 
-# Rodada final (sem MixColumns)
-    state = SubBytes(state)
-    state = shift_rows(state)  # Correção aqui
-    final_round_key = expanded_key[10]
-    state = AddRoundKey(state, final_round_key)
+        state = AddRoundKey(state, round_key)
 
+    # Rodada final
+    print("\nInício da Rodada Final")
+    state = SubBytes(state)
+    print_table("Após SubBytes (Rodada Final)", state)
+    
+    state = shift_rows(state)
+    print_table("Após ShiftRows (Rodada Final)", state)
+    
+    final_round_key = expanded_key[10]
+    print_table("Chave da Rodada Final", final_round_key)
+    
+    state = AddRoundKey(state, final_round_key)
+    
+    # Exibir o estado final cifrado
     print_table("Texto Cifrado Final", state)
 
-    # Achatar a matriz de estado para obter a lista final de bytes
+    # Retorna a lista de 16 bytes após a criptografia
     return [state[row][col] for col in range(4) for row in range(4)]
 
 # Função para converter string hexadecimal em lista de inteiros
@@ -176,4 +181,3 @@ ciphertext = AES_encrypt(plaintext, key)
 
 # Exibir o resultado da criptografia
 print("Texto Cifrado:", ''.join(f'{byte:02x}' for byte in ciphertext))
-
