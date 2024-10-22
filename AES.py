@@ -124,7 +124,9 @@ def AES_encrypt(plaintext, key):
     expanded_key = KeyExpansion(key)
     
     # Adiciona a primeira rodada da chave
+    print_table("Início da Rodada", state)
     state = AddRoundKey(state, expanded_key[0])
+    print_table("Chave da Rodada Inicial", expanded_key[0])
 
     for round_num in range(1, 10):  # De 1 a 9 rodadas principais
         print_table(f"Início da Rodada {round_num}", state)
@@ -153,7 +155,7 @@ def AES_encrypt(plaintext, key):
 
     final_round_key = expanded_key[10]
     print_table("Chave da Rodada Final", final_round_key)
-
+    
     state = AddRoundKey(state, final_round_key)
 
     # Exibir o estado final cifrado
