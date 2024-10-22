@@ -1,3 +1,6 @@
+plaintext = "0123456789abcdeffedcba9876543210"
+key = "0f1571c947d9e8590cb7add6af7f6798"
+
 # Definindo a S-Box
 s_box = [
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -124,10 +127,8 @@ def AES_encrypt(plaintext, key):
     expanded_key = KeyExpansion(key)
     
     # Adiciona a primeira rodada da chave
-    print_table("Início da Rodada", state)
     state = AddRoundKey(state, expanded_key[0])
-    print_table("Chave da Rodada Inicial", expanded_key[0])
-    
+
     for round_num in range(1, 10):  # De 1 a 9 rodadas principais
         print_table(f"Início da Rodada {round_num}", state)
 
@@ -167,10 +168,9 @@ def AES_encrypt(plaintext, key):
 # Função para converter string hexadecimal em lista de inteiros
 def hex_to_bytes(hex_string):
     return [int(hex_string[i:i+2], 16) for i in range(0, len(hex_string), 2)]
-
 # Definindo o plaintext e a chave em formato hexadecimal
-plaintext_hex = "0123456789abcdeffedcba9876543210"
-key_hex = "0f1571c947d9e8590cb7add6af7f6798"
+plaintext_hex = "0f1571c947d9e8590cb7add6af7f6798"
+key_hex = "0123456789abcdeffedcba9876543210"
 
 # Convertendo o texto claro e a chave
 plaintext = hex_to_bytes(plaintext_hex)
