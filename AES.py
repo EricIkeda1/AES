@@ -67,7 +67,7 @@ def MixColumns(state):
             a[0] ^ galois_mult(a[1], 2) ^ galois_mult(a[2], 3) ^ a[3],
             a[0] ^ a[1] ^ galois_mult(a[2], 2) ^ galois_mult(a[3], 3),
             galois_mult(a[0], 3) ^ a[1] ^ a[2] ^ galois_mult(a[3], 2)
-        ]
+        ] 
     return state
 
 
@@ -140,8 +140,9 @@ def AES_encrypt(plaintext, key):
         state = shift_rows(state)
         print_table(f"Após ShiftRows (Rodada {round_num})", state)
         
-        state = MixColumns(state)
-        print_table(f"Após MixColumns (Rodada {round_num})", state)
+        if round_num < 10: 
+            state = MixColumns(state)
+            print_table(f"Após MixColumns (Rodada {round_num})", state)
         
         round_key = expanded_key[round_num]
         print_table(f"Chave da Rodada {round_num}", round_key)
@@ -149,22 +150,27 @@ def AES_encrypt(plaintext, key):
         state = AddRoundKey(state, round_key)
 
     # Rodada final
-    print("\nInício da Rodada Final")
+    print_table("Início da Rodada (Rodada Final)", state)
+
+    # Aplicando as transformações da rodada final
     state = SubBytes(state)
     print_table("Após SubBytes (Rodada Final)", state)
 
     state = shift_rows(state)
     print_table("Após ShiftRows (Rodada Final)", state)
-
-    final_round_key = expanded_key[10]
-    print_table("Chave da Rodada Final", final_round_key)
     
+    print_table(f"Após MixColumns (Rodada {round_num})", state)
+
+    
+    final_round_key = expanded_key[10]
+    print_table("Chave da Rodada Final", final_round_key)  # Imprime a chave da rodada final
     state = AddRoundKey(state, final_round_key)
+
 
     # Exibir o estado final cifrado
     print_table("Texto Cifrado Final", state)
 
-# Retorna a lista de 16 bytes após a criptografia
+    # Retorna a lista de 16 bytes após a criptografia
     return [state[row][col] for col in range(4) for row in range(4)]
 
 # Função para converter string hexadecimal em lista de inteiros
