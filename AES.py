@@ -31,16 +31,18 @@ def SubBytes(state):
             state[i][j] = s_box[state[i][j]]
     return state
 
-# Função ShiftRows
+# Função ShiftColumns
 def shift_rows(state):
-    # Primeira linha não é alterada
-    # Segunda linha é rotacionada 1 byte à esquerda
-    state[1] = state[1][1:] + state[1][:1]
-    # Terceira linha é rotacionada 2 bytes à esquerda
-    state[2] = state[2][2:] + state[2][:2]
-    # Quarta linha é rotacionada 3 bytes à esquerda
-    state[3] = state[3][3:] + state[3][:3]
+    # Primeira coluna não é alterada
+    # Segunda coluna é rotacionada 1 byte para cima
+    state[0][1], state[1][1], state[2][1], state[3][1] = state[1][1], state[2][1], state[3][1], state[0][1]
     
+    # Terceira coluna é rotacionada 2 bytes para cima
+    state[0][2], state[1][2], state[2][2], state[3][2] = state[2][2], state[3][2], state[0][2], state[1][2]
+    
+    # Quarta coluna é rotacionada 3 bytes para cima
+    state[0][3], state[1][3], state[2][3], state[3][3] = state[3][3], state[0][3], state[1][3], state[2][3]
+
     return state
 
 # Função para multiplicar no campo finito (Galois Field)
@@ -67,6 +69,7 @@ def MixColumns(state):
             galois_mult(a[0], 3) ^ a[1] ^ a[2] ^ galois_mult(a[3], 2)
         ]
     return state
+
 
 # Função AddRoundKey
 def AddRoundKey(state, round_key):
