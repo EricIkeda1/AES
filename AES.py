@@ -148,31 +148,32 @@ def AES_encrypt(plaintext, key):
 
         state = AddRoundKey(state, round_key)
 
-    # Rodada final
-    print_table("Início da Rodada (Rodada Final)", state)
-
-    # Aplicando as transformações da rodada final
+    # Rodada final (sem MixColumns)
+    print_table(f"Início da Rodada {round_num}", state)
+    
     state = SubBytes(state)
     print_table("Após SubBytes (Rodada Final)", state)
-
+    
     state = shift_rows(state)
     print_table("Após ShiftRows (Rodada Final)", state)
     
-    print_table(f"Após MixColumns (Rodada Final)", state)
+    print_table(f"Após MixColumns (Rodada {round_num})", state)
 
-    final_round_key = expanded_key[10]
-    print_table("Chave da Rodada Final", final_round_key)  # Imprime a chave da rodada final
-    state = AddRoundKey(state, final_round_key)
-
-    # Exibir o estado final cifrado
+    # Adicionando a chave final
+    round_key = expanded_key[10]  # A última chave é a 10ª
+    print_table("Chave da Rodada Final", round_key)
+    
+    state = AddRoundKey(state, round_key)
     print_table("Texto Cifrado Final", state)
 
-    # Retorna a lista de 16 bytes após a criptografia
-    return [state[row][col] for col in range(4) for row in range(4)]
+    # Convertendo a matriz de estado de volta para o formato de texto cifrado
+    ciphertext = [byte for row in state for byte in row]
+    return ciphertext
 
 # Função para converter string hexadecimal em lista de inteiros
 def hex_to_bytes(hex_string):
     return [int(hex_string[i:i+2], 16) for i in range(0, len(hex_string), 2)]
+
 # Definindo o plaintext e a chave em formato hexadecimal
 plaintext_hex = "0123456789abcdeffedcba9876543210"
 key_hex = "0f1571c947d9e8590cb7add6af7f6798"
