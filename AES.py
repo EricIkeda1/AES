@@ -140,9 +140,8 @@ def AES_encrypt(plaintext, key):
         state = shift_rows(state)
         print_table(f"Após ShiftRows (Rodada {round_num})", state)
         
-        if round_num < 10: 
-            state = MixColumns(state)
-            print_table(f"Após MixColumns (Rodada {round_num})", state)
+        state = MixColumns(state)
+        print_table(f"Após MixColumns (Rodada {round_num})", state)
         
         round_key = expanded_key[round_num]
         print_table(f"Chave da Rodada {round_num}", round_key)
@@ -159,13 +158,11 @@ def AES_encrypt(plaintext, key):
     state = shift_rows(state)
     print_table("Após ShiftRows (Rodada Final)", state)
     
-    print_table(f"Após MixColumns (Rodada {round_num})", state)
+    print_table(f"Após MixColumns (Rodada Final)", state)
 
-    
     final_round_key = expanded_key[10]
     print_table("Chave da Rodada Final", final_round_key)  # Imprime a chave da rodada final
     state = AddRoundKey(state, final_round_key)
-
 
     # Exibir o estado final cifrado
     print_table("Texto Cifrado Final", state)
