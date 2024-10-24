@@ -70,7 +70,6 @@ def MixColumns(state):
         ] 
     return state
 
-
 # Função AddRoundKey
 def AddRoundKey(state, round_key):
     for i in range(4):
