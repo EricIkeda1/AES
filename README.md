@@ -1,7 +1,7 @@
 # Criptografia AES em Python
 > **Disciplina:** Cybersecurity
 
-Este repositório contém uma implementação do algoritmo de criptografia AES em Python. A criptografia AES (Advanced Encryption Standard) é um método amplamente utilizado para garantir a segurança e a privacidade dos dados.
+Este repositório contém uma implementação do algoritmo de criptografia AES em Python. A criptografia AES (Advanced Encryption Standard) é um método utilizado para garantir a segurança e a privacidade dos dados.
 
 ## Objetivo do Projeto
 Desenvolver uma aplicação em Python capaz de criptografar e descriptografar mensagens utilizando o algoritmo AES. Este projeto foi desenvolvido para a disciplina de Cybersecurity, implementação de algoritmos de criptografia simétrica.
