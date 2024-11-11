@@ -25,7 +25,7 @@ AES (Advanced Encryption Standard) é um padrão de criptografia de bloco que ut
 
 > **Nota:** O algoritmo é repetido por 10 rodadas para criptografia e descriptografia completa.
 
-## Começando
+## Como Rodar?
 ### Pré-requisitos
 Para rodar o projeto, você precisará de:
 - Python 3.x (nenhuma biblioteca externa adicional é necessária)
