@@ -8,7 +8,7 @@ Desenvolver uma aplicação em Python capaz de criptografar e descriptografar me
 
 ## Resultados Esperados
 Para um conjunto específico de dados de entrada, o resultado esperado da criptografia é:
-- **Hash esperado:** `FF0B844A0853BF7C6934AB4364148FB9`
+- **Resultado esperado:** `FF0B844A0853BF7C6934AB4364148FB9`
 
 ##  Estrutura do Algoritmo AES
 Abaixo está uma visualização da estrutura do algoritmo AES, mostrando o fluxo de criptografia e os passos envolvidos:
