@@ -30,7 +30,7 @@ AES (Advanced Encryption Standard) é um padrão de criptografia de bloco que ut
 Para rodar o projeto, você precisará de:
 - Python 3.x (nenhuma biblioteca externa adicional é necessária)
 
-### Instalação e Execução
+### Execução
 Abra o PowerShell e execute os seguintes comandos:
 
 ```
