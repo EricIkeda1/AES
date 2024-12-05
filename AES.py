@@ -175,14 +175,23 @@ def hex_to_bytes(hex_string):
     # Converte uma string hexadecimal em uma lista de bytes
     return [int(hex_string[i:i+2], 16) for i in range(0, len(hex_string), 2)]
 
-# Solicitar ao usuário a entrada do texto plano e da chave em formato hexadecimal
-plaintext_hex = input("Digite o texto plano em hexadecimal: ")
-key_hex = input("Digite a chave em hexadecimal: ")
+# Loop principal que continua até o usuário digitar 'sair'
+while True:
+    # Solicitar ao usuário a entrada do texto plano e da chave em formato hexadecimal
+    plaintext_hex = input("Digite o texto plano em hexadecimal (ou 'sair' para encerrar): ")
+    
+    # Se o usuário digitar 'sair', o loop será encerrado
+    if plaintext_hex.lower() == 'sair':
+        print("Saindo...")
+        break
+    
+    key_hex = input("Digite a chave em hexadecimal: ")
 
-# Verificar se o comprimento da chave é adequado (16 bytes para AES-128)
-if len(key_hex) != 32:
-    print("A chave deve ter 32 caracteres hexadecimais (16 bytes).")
-else:
+    # Verificar se o comprimento da chave é adequado (16 bytes para AES-128)
+    if len(key_hex) != 32:
+        print("A chave deve ter 32 caracteres hexadecimais (16 bytes).")
+        continue  # Continua o loop se a chave for inválida
+    
     # Convertendo o texto claro e a chave de hexadecimal para bytes
     plaintext = hex_to_bytes(plaintext_hex)
     key = hex_to_bytes(key_hex)
