@@ -172,18 +172,23 @@ def AES_encrypt(plaintext, key):
 
 # Função para converter string hexadecimal em lista de inteiros
 def hex_to_bytes(hex_string):
+    # Converte uma string hexadecimal em uma lista de bytes
     return [int(hex_string[i:i+2], 16) for i in range(0, len(hex_string), 2)]
 
-# Definindo o plaintext e a chave em formato hexadecimal
-plaintext_hex = "0123456789abcdeffedcba9876543210"
-key_hex = "0f1571c947d9e8590cb7add6af7f6798"
+# Solicitar ao usuário a entrada do texto plano e da chave em formato hexadecimal
+plaintext_hex = input("Digite o texto plano em hexadecimal: ")
+key_hex = input("Digite a chave em hexadecimal: ")
 
-# Convertendo o texto claro e a chave
-plaintext = hex_to_bytes(plaintext_hex)
-key = hex_to_bytes(key_hex)
+# Verificar se o comprimento da chave é adequado (16 bytes para AES-128)
+if len(key_hex) != 32:
+    print("A chave deve ter 32 caracteres hexadecimais (16 bytes).")
+else:
+    # Convertendo o texto claro e a chave de hexadecimal para bytes
+    plaintext = hex_to_bytes(plaintext_hex)
+    key = hex_to_bytes(key_hex)
 
-# Chamar a função AES_encrypt para criptografar o texto
-ciphertext = AES_encrypt(plaintext, key)
+    # Chamar a função AES_encrypt para criptografar o texto
+    ciphertext = AES_encrypt(plaintext, key)
 
-# Exibir o resultado da criptografia
-print("Texto Cifrado:", ''.join(f'{byte:02x}' for byte in ciphertext))
+    # Exibir o resultado da criptografia
+    print("Texto Cifrado:", ''.join(f'{byte:02x}' for byte in ciphertext))
